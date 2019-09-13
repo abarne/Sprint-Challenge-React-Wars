@@ -8,7 +8,8 @@ const CharacterCard = styled.div`
 	width: 300px;
 	justify-content: space-between;
 	margin: 20px;
-	border: 2px solid #ccc;
+	border: 5px solid #35271d;
+	background: rgba(168, 147, 130, 0.5);
 
 	color: black;
 `;
@@ -16,21 +17,25 @@ const CharacterContainer = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 `;
-export default function StarWarsList() {
+export default function StarWarsList(props) {
 	const [ characters, setCharacters ] = useState([]);
 
-	useEffect(() => {
-		axios
-			.get(`https://swapi.co/api/people`)
-			.then((response) => {
-				const characterInfo = response.data.results;
-				console.log(characterInfo);
-				setCharacters(characterInfo);
-			})
-			.catch((error) => {
-				console.log('The data was not returned, ', error);
-			});
-	}, []);
+	useEffect(
+		() => {
+			axios
+				.get(`https://swapi.co/api/people/?page=${props.page}`)
+				.then((response) => {
+					console.log(response);
+					const characterInfo = response.data.results;
+					console.log(characterInfo);
+					setCharacters(characterInfo);
+				})
+				.catch((error) => {
+					console.log('The data was not returned, ', error);
+				});
+		},
+		[ props.page ]
+	);
 
 	return (
 		<CharacterContainer>
@@ -38,15 +43,15 @@ export default function StarWarsList() {
 				return (
 					<CharacterCard>
 						<StarWarsCard
-							key={character.id}
+							key={character.created}
 							name={character.name}
 							gender={character.gender}
 							hairColor={character.hair_color}
 							birthYear={character.birth_year}
 							eyeColor={character.eye_color}
 							height={character.height}
-							weight={character.weight}
-							skinColor={character.skinColor}
+							weight={character.mass}
+							skinColor={character.skin_color}
 						/>
 					</CharacterCard>
 				);
